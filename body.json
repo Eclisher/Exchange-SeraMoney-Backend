@@ -1,0 +1,25 @@
+[{
+  "full_name": "Haingo Harizo",
+  "phone_number": "0386749113",
+  "mobile_money_type": "MVola",
+  "password": "harizo123"
+},
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwMGRiMWY3LTM0OGYtNDk5OC05OTljLWM2YzhjMGZiY2JmNSIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjcyMTE1MTQsImV4cCI6MTc2NzI5NzkxNH0.FtZlJimKN0VE27Xl3fEAQQ-Bkn1NmPgI2w_-nKiYed0",
+  "user": {
+    "id": "300db1f7-348f-4998-999c-c6c8c0fbcbf5",
+    "full_name": "Haingo Harizo",
+    "role": "CLIENT"
+  }
+},
+{
+  "type": "ACHAT",
+  "crypto": "USDT",
+  "network": "TRC20",
+  "amount_crypto": 5,
+  "amount_ariary": 23000,
+  "wallet_address": "Binance",
+  "notes": "Dépôt via MVola"
+}
+
+]
