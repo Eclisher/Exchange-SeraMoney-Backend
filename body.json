@@ -1,25 +1,87 @@
-[{
-  "full_name": "Haingo Harizo",
-  "phone_number": "0386749113",
-  "mobile_money_type": "MVola",
-  "password": "harizo123"
-},
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwMGRiMWY3LTM0OGYtNDk5OC05OTljLWM2YzhjMGZiY2JmNSIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjcyMTE1MTQsImV4cCI6MTc2NzI5NzkxNH0.FtZlJimKN0VE27Xl3fEAQQ-Bkn1NmPgI2w_-nKiYed0",
-  "user": {
-    "id": "300db1f7-348f-4998-999c-c6c8c0fbcbf5",
+[
+  {
     "full_name": "Haingo Harizo",
-    "role": "CLIENT"
+    "phone_number": "038 67 491 13",
+    "mobile_money_type": "MVola",
+    "password": "harizo123"
+  },
+  {
+    "full_name": "Haingo Harizo",
+    "phone_number": "0324379179",
+    "mobile_money_type": "Orange",
+    "password": "admin123"
+  },
+  
+  {
+    "full_name": "Degany be",
+    "phone_number": "0323791729",
+    "mobile_money_type": "Orange",
+    "password": "Degany123"
+  },
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwMGRiMWY3LTM0OGYtNDk5OC05OTljLWM2YzhjMGZiY2JmNSIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjczNTAwNTAsImV4cCI6MTc2NzQzNjQ1MH0.kucexKmOqykaPCuK9CqegWm8dqp4257vOuunHLdKG4w",
+    "user": {
+      "id": "300db1f7-348f-4998-999c-c6c8c0fbcbf5",
+      "full_name": "Haingo Harizo",
+      "role": "CLIENT"
+    }
+  },
+  {
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0Y2E4MGZmLTg2OWEtNGQ2YS1iNTM0LWI2NTk3ODk5MGI3YSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzUzNDUzOSwiZXhwIjoxNzY3NjIwOTM5fQ.5WbMWv59CzyAWgvDBdObaFEV4Su_yvnSoDwRJtiWZUE",
+  "user": {
+    "id": "c4ca80ff-869a-4d6a-b534-b65978990b7a",
+    "full_name": "Haingo Harizo",
+    "role": "ADMIN"
   }
 },
-{
-  "type": "ACHAT",
-  "crypto": "USDT",
-  "network": "TRC20",
-  "amount_crypto": 5,
-  "amount_ariary": 23000,
-  "wallet_address": "Binance",
-  "notes": "Dépôt via MVola"
-}
-
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZjNGNjYjQxLTNhN2EtNGUxOC1hNTk2LTM0MWVkNzFhMDI1MyIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjczNDg2MTQsImV4cCI6MTc2NzQzNTAxNH0.SCWv19lvvZZ9402gjMQyzCzjOa4tZMoy6asnX322MBs",
+    "user": {
+      "id": "6c4ccb41-3a7a-4e18-a596-341ed71a0253",
+      "full_name": "Degany be",
+      "role": "CLIENT"
+    }
+  },
+  {
+    "type": "ACHAT",
+    "reference": "acht-6c4ccb41-3a7a-4e18-a596-341ed71a0253",
+    "crypto": "USDT",
+    "network": "TRC20",
+    "amount_crypto": 5,
+    "amount_ariary": 23000,
+    "wallet_address": "Binance",
+    "notes": "Dépôt via MVola"
+  },
+  {
+    "type": "ACHAT",
+    "crypto": "USDT",
+    "network": "TRC20",
+    "amount_crypto": 5,
+    "amount_ariary": 23000,
+    "wallet_address": "Binance - USDT TRC20",
+    "notes": "Dépôt via MVola"
+  },
+  {
+    "type": "VENTE",
+    "crypto": "USDT",
+    "network": "TRC20",
+    "amount_crypto": 5,
+    "amount_ariary": 23000,
+    "wallet_address": null,
+    "notes": "Retrait via Orange Money"
+  },
+    {
+    "id": "b9b062de-761d-4952-9212-4c2c212f5de3",
+    "type": "VENTE",
+    "crypto": "USDT",
+    "network": "TRC20",
+    "amount_ariary": "23000.00",
+    "amount_crypto": "5.00000000",
+    "wallet_address": null,
+    "status": "EN_ATTENTE",
+    "created_at": "2026-01-02T10:28:47.416Z",
+    "full_name": "Degany be",
+    "phone_number": "0323791729",
+    "mobile_money_type": "ORANGE"
+    }
 ]

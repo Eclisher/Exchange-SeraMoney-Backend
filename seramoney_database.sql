@@ -26,6 +26,18 @@ CREATE TABLE users (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+INSERT INTO users (
+  full_name,
+  phone_number,
+  password_hash,
+  role
+) VALUES (
+  'Admin Seramoney',
+  '0386749113',
+  'harizo123',
+  'ADMIN'
+);
+
 
 -- ================================
 -- 4️⃣ TABLE : transactions
