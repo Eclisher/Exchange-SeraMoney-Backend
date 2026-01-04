@@ -13,14 +13,30 @@ const isValidPhoneForMobileMoney = (phone, mobileMoneyType) => {
 
   return pattern.test(cleaned);
 };
+const isValidEmail = (email) => {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
+};
 
 
 export const register = async (req, res) => {
-  const { full_name, phone_number, mobile_money_type, password } = req.body;
+  const { full_name, phone_number, email, mobile_money_type, password } =
+    req.body;
 
-  if (!full_name || !phone_number || !mobile_money_type || !password) {
+  if (
+    !full_name ||
+    !phone_number ||
+    !email ||
+    !mobile_money_type ||
+    !password
+  ) {
     return res.status(400).json({ message: "Champs manquants" });
   }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ message: "Adresse email invalide" });
+  }
+
   if (!isValidPhoneForMobileMoney(phone_number, mobile_money_type)) {
     return res.status(400).json({
       message: "Numéro incohérent avec le type Mobile Money sélectionné",
@@ -31,25 +47,34 @@ export const register = async (req, res) => {
     const hash = await bcrypt.hash(password, 10);
 
     await pool.query(
-      `INSERT INTO users (full_name, phone_number, mobile_money_type, password_hash)
-       VALUES ($1,$2,$3,$4)`,
-      [full_name, phone_number, mobile_money_type.toUpperCase(), hash]
+      `INSERT INTO users 
+       (full_name, phone_number, email, mobile_money_type, password_hash)
+       VALUES ($1,$2,$3,$4,$5)`,
+      [
+        full_name,
+        phone_number,
+        email.toLowerCase(),
+        mobile_money_type.toUpperCase(),
+        hash,
+      ]
     );
 
     res.status(201).json({ message: "Compte créé avec succès" });
   } catch (err) {
-    res.status(400).json({ message: "Numéro déjà utilisé" });
+    console.error(err);
+    res.status(400).json({
+      message: "Numéro ou email déjà utilisé",
+    });
   }
 };
 
 
 export const login = async (req, res) => {
-  const { phone_number, full_name, password } = req.body;
+  const { phone_number, email, full_name, password } = req.body;
 
-  if ((!phone_number && !full_name) || !password) {
+  if ((!phone_number || !email || !full_name) && !password) {
     return res.status(400).json({ message: "Champs manquants" });
   }
-
   let result;
 
   try {
@@ -57,6 +82,11 @@ export const login = async (req, res) => {
       result = await pool.query(
         "SELECT * FROM users WHERE phone_number = $1 AND is_active = true",
         [phone_number]
+      );
+    } else if (email) {
+      result = await pool.query(
+        "SELECT * FROM users WHERE email = $1 AND is_active = true",
+        [email.toLowerCase()]
       );
     } else if (full_name) {
       result = await pool.query(
@@ -75,9 +105,7 @@ export const login = async (req, res) => {
     if (!valid) {
       return res.status(401).json({ message: "Mot de passe incorrect" });
     }
-    console.log("Mot de passe saisi:", password);
-    console.log("Hash en base:", user.password_hash);
-    console.log("Résultat comparaison:", valid);
+
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
@@ -89,6 +117,8 @@ export const login = async (req, res) => {
       user: {
         id: user.id,
         full_name: user.full_name,
+        email: user.email,
+        phone_number: user.phone_number,
         role: user.role,
       },
     });
@@ -97,4 +127,5 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
+
   

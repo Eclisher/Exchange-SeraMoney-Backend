@@ -100,4 +100,9 @@ CREATE INDEX idx_transactions_status ON transactions(status);
 -- TERMINE
 -- REFUSE
 
+ALTER TABLE transactions
+ADD COLUMN reference VARCHAR(50) UNIQUE;
 
+ALTER TABLE users ADD COLUMN email VARCHAR(150) UNIQUE;
+
+ALTER TABLE users ALTER COLUMN role SET DEFAULT 'ADMIN';
