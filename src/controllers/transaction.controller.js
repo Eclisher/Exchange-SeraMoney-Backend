@@ -1,4 +1,5 @@
 import { pool } from "../config/database.js";
+import { randomUUID } from "crypto";
 
 export const createTransaction = async (req, res) => {
   const {
@@ -34,14 +35,18 @@ export const createTransaction = async (req, res) => {
     }
   }
 
+  const prefix = type === "ACHAT" ? "acht" : "vnt";
+  const reference = `${prefix}-${randomUUID()}`;
+
   try {
     const result = await pool.query(
       `INSERT INTO transactions 
-       (user_id, type, crypto, network, amount_crypto, amount_ariary, wallet_address, notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       (user_id, reference, type, crypto, network, amount_crypto, amount_ariary, wallet_address, notes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
        RETURNING *`,
       [
         user_id,
+        reference,
         type,
         crypto,
         network,
@@ -57,7 +62,7 @@ export const createTransaction = async (req, res) => {
       return res.status(201).json({
         message: "Demande d'achat enregistrée",
         data: {
-          id: transaction.id,
+          reference: transaction.reference,
           type: transaction.type,
           crypto: transaction.crypto,
           network: transaction.network,
@@ -77,7 +82,7 @@ export const createTransaction = async (req, res) => {
     return res.status(201).json({
       message: "Demande de retrait enregistrée",
       data: {
-        id: transaction.id,
+        reference: transaction.reference,
         type: transaction.type,
         crypto: transaction.crypto,
         network: transaction.network,
@@ -94,7 +99,6 @@ export const createTransaction = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur" });
   }
 };
-
 
 export const getUserTransactions = async (req, res) => {
   const user_id = req.user.id;

@@ -44,7 +44,6 @@
   },
   {
     "type": "ACHAT",
-    "reference": "acht-6c4ccb41-3a7a-4e18-a596-341ed71a0253",
     "crypto": "USDT",
     "network": "TRC20",
     "amount_crypto": 5,
@@ -67,7 +66,6 @@
     "network": "TRC20",
     "amount_crypto": 5,
     "amount_ariary": 23000,
-    "wallet_address": null,
     "notes": "Retrait via Orange Money"
   },
     {
@@ -85,3 +83,5 @@
     "mobile_money_type": "ORANGE"
     }
 ]
+
+
