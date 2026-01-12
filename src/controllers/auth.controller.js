@@ -1,6 +1,15 @@
 import { pool } from "../config/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { transporter } from "../config/mail.js";
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP ERROR:", error);
+  } else {
+    console.log("SMTP prêt à envoyer des emails");
+  }
+});
 const isValidPhoneForMobileMoney = (phone, mobileMoneyType) => {
   const cleaned = phone.replace(/\s+/g, "");
   const patterns = {
@@ -128,4 +137,111 @@ export const login = async (req, res) => {
   }
 };
 
-  
+export const getAllUsers = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        id,
+        full_name,
+        phone_number,
+        email,
+        mobile_money_type,
+        role,
+        is_active,
+        created_at
+      FROM users
+      ORDER BY created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+}
+
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email requis" });
+  }
+
+  const result = await pool.query(
+    "SELECT * FROM users WHERE email = $1 AND is_active = true",
+    [email.toLowerCase()]
+  );
+
+  if (!result.rows.length) {
+    return res.status(404).json({ message: "Utilisateur non trouvé" });
+  }
+
+  const user = result.rows[0];
+
+  const token = crypto.randomUUID();
+  const expires = new Date(Date.now() + 15 * 60 * 1000); 
+
+  await pool.query(
+    `UPDATE users 
+     SET reset_password_token=$1, reset_password_expires=$2
+     WHERE id=$3`,
+    [token, expires, user.id]
+  );
+
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+  await transporter.sendMail({
+    from: `"Support Crypto" <${process.env.MAIL_USER}>`,
+    to: user.email,
+    subject: "Réinitialisation de votre mot de passe",
+    html: `
+      <p>Bonjour ${user.full_name},</p>
+      <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>Ce lien expire dans 15 minutes.</p>
+    `,
+  });
+
+  res.json({ message: "Email de réinitialisation envoyé" });
+};
+
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password, confirmPassword } = req.body;
+
+  if (!password || !confirmPassword) {
+    return res.status(400).json({ message: "Champs manquants" });
+  }
+
+  if (password !== confirmPassword) {
+    return res
+      .status(400)
+      .json({ message: "Les mots de passe ne correspondent pas" });
+  }
+
+  const result = await pool.query(
+    `SELECT * FROM users 
+     WHERE reset_password_token=$1 
+     AND reset_password_expires > NOW()`,
+    [token]
+  );
+
+  if (!result.rows.length) {
+    return res.status(400).json({ message: "Token invalide ou expiré" });
+  }
+
+  const user = result.rows[0];
+  const hash = await bcrypt.hash(password, 10);
+
+  await pool.query(
+    `UPDATE users 
+     SET password_hash=$1, 
+         reset_password_token=NULL, 
+         reset_password_expires=NULL
+     WHERE id=$2`,
+    [hash, user.id]
+  );
+
+  res.json({ message: "Mot de passe réinitialisé avec succès" });
+};

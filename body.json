@@ -1,7 +1,8 @@
 [
   {
     "full_name": "Haingo Harizo",
-    "phone_number": "038 67 491 13",
+    "email": "haingo.harizo@gmail.com",
+    "phone_number": "0386749113",
     "mobile_money_type": "MVola",
     "password": "harizo123"
   },
@@ -12,9 +13,20 @@
   "mobile_money_type": "Orange",
   "password": "admin123"
 },
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODJkMDZkLWEzN2EtNDExYi05YzZhLTZlOGJjZGZmNTVkOCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzU1MTk4MSwiZXhwIjoxNzY3NjM4MzgxfQ.Dng7Ux8g2B08SmIkipsqLlZarDFkk5uSxdC9BpwuA8g",
+  "user": {
+    "id": "6582d06d-a37a-411b-9c6a-6e8bcdff55d8",
+    "full_name": "Sera Money",
+    "email": "contact@seramoney.com",
+    "phone_number": "0324379179",
+    "role": "ADMIN"
+  }
+},
   {
     "full_name": "Degany be",
     "phone_number": "0323791729",
+    "email": "hei.harizo@gmail.com",
     "mobile_money_type": "Orange",
     "password": "Degany123"
   },
