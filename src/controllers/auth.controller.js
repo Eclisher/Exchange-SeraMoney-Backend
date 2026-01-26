@@ -12,21 +12,33 @@ transporter.verify((error, success) => {
 });
 const isValidPhoneForMobileMoney = (phone, mobileMoneyType) => {
   const cleaned = phone.replace(/\s+/g, "");
+
   const patterns = {
     ORANGE: /^(?:\+261|0)(32|37)\d{7}$/,
     MVOLA: /^(?:\+261|0)(34|38)\d{7}$/,
   };
 
-  const pattern = patterns[mobileMoneyType.toUpperCase()];
-  if (!pattern) return false;
+  const normalizedType = normalizeMobileMoney(mobileMoneyType);
+  if (!normalizedType) return false;
 
-  return pattern.test(cleaned);
+  return patterns[normalizedType].test(cleaned);
 };
 const isValidEmail = (email) => {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 };
+const normalizeMobileMoney = (type) => {
+  if (!type) return null;
 
+  const map = {
+    MVOLA: "MVOLA",
+    MVOLA: "MVOLA",
+    ORANGEMONEY: "ORANGE",
+    ORANGE: "ORANGE",
+  };
+
+  return map[type.toUpperCase()] || null;
+};
 
 export const register = async (req, res) => {
   const { full_name, phone_number, email, mobile_money_type, password } =
@@ -50,7 +62,7 @@ export const register = async (req, res) => {
     return res.status(400).json({
       message: "Numéro incohérent avec le type Mobile Money sélectionné",
     });
-  }
+  } 
 
   try {
     const hash = await bcrypt.hash(password, 10);

@@ -44,6 +44,7 @@ export const getAllTransactions = async (req, res) => {
         t.wallet_address,
         t.status,
         t.notes,
+        t.reference,
         t.created_at,
         t.updated_at,
         u.full_name AS client_name,

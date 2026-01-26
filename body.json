@@ -7,28 +7,39 @@
     "password": "harizo123"
   },
   {
-  "full_name": "Sera Money",
-  "email": "contact@seramoney.com",
-  "phone_number": "0324379179",
-  "mobile_money_type": "Orange",
-  "password": "admin123"
-},
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODJkMDZkLWEzN2EtNDExYi05YzZhLTZlOGJjZGZmNTVkOCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzU1MTk4MSwiZXhwIjoxNzY3NjM4MzgxfQ.Dng7Ux8g2B08SmIkipsqLlZarDFkk5uSxdC9BpwuA8g",
-  "user": {
-    "id": "6582d06d-a37a-411b-9c6a-6e8bcdff55d8",
     "full_name": "Sera Money",
     "email": "contact@seramoney.com",
     "phone_number": "0324379179",
-    "role": "ADMIN"
-  }
-},
+    "mobile_money_type": "Orange",
+    "password": "admin123"
+  },
+  {
+    "email": "contact@seramoney.com",
+    "password": "admin123"
+  },
+  {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ODJkMDZkLWEzN2EtNDExYi05YzZhLTZlOGJjZGZmNTVkOCIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzU1MTk4MSwiZXhwIjoxNzY3NjM4MzgxfQ.Dng7Ux8g2B08SmIkipsqLlZarDFkk5uSxdC9BpwuA8g",
+    "user": {
+      "id": "6582d06d-a37a-411b-9c6a-6e8bcdff55d8",
+      "full_name": "Sera Money",
+      "email": "contact@seramoney.com",
+      "phone_number": "0324379179",
+      "role": "ADMIN"
+    }
+  },
   {
     "full_name": "Degany be",
     "phone_number": "0323791729",
     "email": "hei.harizo@gmail.com",
     "mobile_money_type": "Orange",
     "password": "Degany123"
+  },
+  {
+    "full_name": "Koloina Maherison",
+    "phone_number": "0349069645",
+    "email": "kolomaherison.@gmail.com",
+    "mobile_money_type": "MVola",
+    "password": "Koloina123"
   },
   {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjMwMGRiMWY3LTM0OGYtNDk5OC05OTljLWM2YzhjMGZiY2JmNSIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjczNTAwNTAsImV4cCI6MTc2NzQzNjQ1MH0.kucexKmOqykaPCuK9CqegWm8dqp4257vOuunHLdKG4w",
@@ -39,13 +50,13 @@
     }
   },
   {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0Y2E4MGZmLTg2OWEtNGQ2YS1iNTM0LWI2NTk3ODk5MGI3YSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzUzNDUzOSwiZXhwIjoxNzY3NjIwOTM5fQ.5WbMWv59CzyAWgvDBdObaFEV4Su_yvnSoDwRJtiWZUE",
-  "user": {
-    "id": "c4ca80ff-869a-4d6a-b534-b65978990b7a",
-    "full_name": "Haingo Harizo",
-    "role": "ADMIN"
-  }
-},
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImM0Y2E4MGZmLTg2OWEtNGQ2YS1iNTM0LWI2NTk3ODk5MGI3YSIsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc2NzUzNDUzOSwiZXhwIjoxNzY3NjIwOTM5fQ.5WbMWv59CzyAWgvDBdObaFEV4Su_yvnSoDwRJtiWZUE",
+    "user": {
+      "id": "c4ca80ff-869a-4d6a-b534-b65978990b7a",
+      "full_name": "Haingo Harizo",
+      "role": "ADMIN"
+    }
+  },
   {
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZjNGNjYjQxLTNhN2EtNGUxOC1hNTk2LTM0MWVkNzFhMDI1MyIsInJvbGUiOiJDTElFTlQiLCJpYXQiOjE3NjczNDg2MTQsImV4cCI6MTc2NzQzNTAxNH0.SCWv19lvvZZ9402gjMQyzCzjOa4tZMoy6asnX322MBs",
     "user": {
@@ -80,7 +91,7 @@
     "amount_ariary": 23000,
     "notes": "Retrait via Orange Money"
   },
-    {
+  {
     "id": "b9b062de-761d-4952-9212-4c2c212f5de3",
     "type": "VENTE",
     "crypto": "USDT",
@@ -93,7 +104,7 @@
     "full_name": "Degany be",
     "phone_number": "0323791729",
     "mobile_money_type": "ORANGE"
-    }
+  }
 ]
 
 

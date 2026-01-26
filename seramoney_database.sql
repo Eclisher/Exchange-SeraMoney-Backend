@@ -106,3 +106,20 @@ ADD COLUMN reference VARCHAR(50) UNIQUE;
 ALTER TABLE users ADD COLUMN email VARCHAR(150) UNIQUE;
 
 ALTER TABLE users ALTER COLUMN role SET DEFAULT 'ADMIN';
+
+ALTER TABLE admin_logs
+DROP CONSTRAINT fk_transaction;
+ALTER TABLE admin_logs
+DROP CONSTRAINT fk_admin;
+
+ALTER TABLE admin_logs
+ADD CONSTRAINT fk_transaction
+FOREIGN KEY (transaction_id)
+REFERENCES transactions(id)
+ON DELETE CASCADE;
+
+ALTER TABLE admin_logs
+ADD CONSTRAINT fk_admin
+FOREIGN KEY (admin_id)
+REFERENCES users(id)
+ON DELETE CASCADE;

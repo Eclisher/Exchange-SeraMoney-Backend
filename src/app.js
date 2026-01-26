@@ -5,6 +5,7 @@ import transactionRoutes from "./routes/transaction.routes.js";
 import adminTransactionRoutes from "./routes/admin.transactions.routes.js";
 import adminUserRoutes from "./routes/admin.users.routes.js";
 import adminLogRoutes from "./routes/admin.logs.routes.js";
+import clientTransactionsRoutes from "./routes/client.transactions.routes.js";
 
 const app = express();
 
@@ -20,4 +21,5 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/admin", adminTransactionRoutes);
 app.use("/api/admin", adminUserRoutes);
 app.use("/api/admin", adminLogRoutes);
+app.use("/api", clientTransactionsRoutes);
 export default app;
