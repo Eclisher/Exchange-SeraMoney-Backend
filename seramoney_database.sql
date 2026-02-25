@@ -82,6 +82,27 @@ CREATE TABLE admin_logs (
         FOREIGN KEY (transaction_id)
         REFERENCES transactions(id)
 );
+CREATE TABLE cryptos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    symbol VARCHAR(10) UNIQUE NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    buy_rate NUMERIC(18,2) NOT NULL,
+    sell_rate NUMERIC(18,2) NOT NULL,
+    color VARCHAR(50),
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP
+);
+CREATE TABLE crypto_networks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    crypto_id UUID NOT NULL,
+    network VARCHAR(50) NOT NULL,
+
+    CONSTRAINT fk_crypto
+        FOREIGN KEY (crypto_id)
+        REFERENCES cryptos(id)
+        ON DELETE CASCADE
+);
 
 -- ================================
 -- 6️⃣ INDEXES (performance)

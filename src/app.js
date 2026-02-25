@@ -6,7 +6,7 @@ import adminTransactionRoutes from "./routes/admin.transactions.routes.js";
 import adminUserRoutes from "./routes/admin.users.routes.js";
 import adminLogRoutes from "./routes/admin.logs.routes.js";
 import clientTransactionsRoutes from "./routes/client.transactions.routes.js";
-
+import cryptoRoutes from "./routes/crypto.routes.js";
 const app = express();
 
 app.use(cors());
@@ -22,4 +22,5 @@ app.use("/api/admin", adminTransactionRoutes);
 app.use("/api/admin", adminUserRoutes);
 app.use("/api/admin", adminLogRoutes);
 app.use("/api", clientTransactionsRoutes);
+app.use("/api/cryptos", cryptoRoutes);
 export default app;
