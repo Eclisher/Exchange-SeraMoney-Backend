@@ -1,7 +1,5 @@
+import "../load-env.js";
 import pkg from "pg";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const { Pool } = pkg;
 
@@ -12,4 +10,5 @@ export const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   ssl: false,
+  
 });

@@ -1,15 +1,8 @@
 import { pool } from "../config/database.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { transporter } from "../config/mail.js";
+import { transporter, isMailConfigured } from "../config/mail.js";
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("SMTP ERROR:", error);
-  } else {
-    console.log("SMTP prêt à envoyer des emails");
-  }
-});
 const isValidPhoneForMobileMoney = (phone, mobileMoneyType) => {
   const cleaned = phone.replace(/\s+/g, "");
 
@@ -200,6 +193,13 @@ export const forgotPassword = async (req, res) => {
      WHERE id=$3`,
     [token, expires, user.id]
   );
+
+  if (!isMailConfigured) {
+    return res.status(503).json({
+      message:
+        "Envoi d’email indisponible : configurez MAIL_USER et MAIL_PASS dans .env",
+    });
+  }
 
   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 

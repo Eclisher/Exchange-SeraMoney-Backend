@@ -52,33 +52,39 @@ async function getAllCryptos() {
 
   return result.rows;
 }
-
 async function updateCrypto(id, data) {
-  const { buy_rate, sell_rate, networks } = data;
+  const { symbol, name, buy_rate, sell_rate, color, is_active, networks } =
+    data;
 
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
-
     await client.query(
-      `UPDATE cryptos
-       SET buy_rate = $1,
-           sell_rate = $2,
-           updated_at = CURRENT_TIMESTAMP
-       WHERE id = $3`,
-      [buy_rate, sell_rate, id],
+      `
+      UPDATE cryptos
+      SET symbol = $1,
+          name = $2,
+          buy_rate = $3,
+          sell_rate = $4,
+          color = $5,
+          is_active = $6,
+          updated_at = CURRENT_TIMESTAMP
+      WHERE id = $7
+      `,
+      [symbol, name, buy_rate, sell_rate, color, is_active, id],
     );
 
-    if (networks) {
+    if (Array.isArray(networks)) {
       await client.query(`DELETE FROM crypto_networks WHERE crypto_id = $1`, [
         id,
       ]);
-
       for (const network of networks) {
         await client.query(
-          `INSERT INTO crypto_networks (crypto_id, network)
-           VALUES ($1, $2)`,
+          `
+          INSERT INTO crypto_networks (crypto_id, network)
+          VALUES ($1, $2)
+          `,
           [id, network],
         );
       }
@@ -89,6 +95,7 @@ async function updateCrypto(id, data) {
     return { message: "Crypto updated successfully" };
   } catch (error) {
     await client.query("ROLLBACK");
+    console.error("Update crypto error:", error);
     throw error;
   } finally {
     client.release();

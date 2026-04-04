@@ -82,12 +82,26 @@ CREATE TABLE admin_logs (
         FOREIGN KEY (transaction_id)
         REFERENCES transactions(id)
 );
+CREATE TABLE wallets (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    lien TEXT NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP,
+
+    CONSTRAINT fk_wallet
+        FOREIGN KEY (wallet_id)
+        REFERENCES wallets(id)
+        ON DELETE CASCADE
+);
+
 CREATE TABLE cryptos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     symbol VARCHAR(10) UNIQUE NOT NULL,
     name VARCHAR(50) NOT NULL,
     buy_rate NUMERIC(18,2) NOT NULL,
-    sell_rate NUMERIC(18,2) NOT NULL,
+    sell_ra te NUMERIC(18,2) NOT NULL,
     color VARCHAR(50),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
