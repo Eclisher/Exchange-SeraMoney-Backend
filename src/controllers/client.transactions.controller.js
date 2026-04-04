@@ -4,10 +4,14 @@ export const getMyTransactions = async (req, res) => {
   const userId = req.user.id; 
   try {
     const result = await pool.query(
-      `SELECT *
-       FROM transactions
-       WHERE user_id = $1
-       ORDER BY created_at DESC`,
+      `SELECT 
+        t.*,
+        w.name AS wallet_name,
+        w.lien AS wallet_lien
+       FROM transactions t
+       LEFT JOIN wallets w ON t.wallet_id = w.id
+       WHERE t.user_id = $1
+       ORDER BY t.created_at DESC`,
       [userId],
     );
 

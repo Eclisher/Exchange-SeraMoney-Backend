@@ -158,3 +158,12 @@ ADD CONSTRAINT fk_admin
 FOREIGN KEY (admin_id)
 REFERENCES users(id)
 ON DELETE CASCADE;
+
+ALTER TABLE transactions
+ADD COLUMN wallet_id UUID;
+
+ALTER TABLE transactions
+ADD CONSTRAINT fk_wallet
+FOREIGN KEY (wallet_id)
+REFERENCES wallets(id)
+ON DELETE SET NULL;

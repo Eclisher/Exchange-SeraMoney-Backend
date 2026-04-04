@@ -13,11 +13,14 @@ export const getPendingTransactions = async (req, res) => {
         t.wallet_address,
         t.status,
         t.created_at,
+        w.name AS wallet_name,
+        w.lien AS wallet_lien,
         u.full_name,
         u.phone_number,
         u.mobile_money_type
       FROM transactions t
       JOIN users u ON u.id = t.user_id
+      LEFT JOIN wallets w ON t.wallet_id = w.id
       WHERE t.status = 'EN_ATTENTE'
       ORDER BY t.created_at ASC
     `);
@@ -47,11 +50,14 @@ export const getAllTransactions = async (req, res) => {
         t.reference,
         t.created_at,
         t.updated_at,
+        w.name AS wallet_name,
+        w.lien AS wallet_lien,
         u.full_name AS client_name,
         u.phone_number,
         u.mobile_money_type
       FROM transactions t
       JOIN users u ON u.id = t.user_id
+      LEFT JOIN wallets w ON t.wallet_id = w.id
       ORDER BY t.created_at DESC
     `);
 

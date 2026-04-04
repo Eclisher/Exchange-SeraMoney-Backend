@@ -8,6 +8,7 @@ export const createTransaction = async (req, res) => {
     network,
     amount_crypto,
     amount_ariary,
+    wallet_id,
     wallet_address,
     notes,
   } = req.body;
@@ -41,8 +42,8 @@ export const createTransaction = async (req, res) => {
   try {
     const result = await pool.query(
       `INSERT INTO transactions 
-       (user_id, reference, type, crypto, network, amount_crypto, amount_ariary, wallet_address, notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+       (user_id, reference, type, crypto, network, amount_crypto, amount_ariary, wallet_id, wallet_address, notes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
        RETURNING *`,
       [
         user_id,
@@ -52,6 +53,7 @@ export const createTransaction = async (req, res) => {
         network,
         amount_crypto || null,
         amount_ariary || null,
+        wallet_id || null,
         type === "ACHAT" ? wallet_address : null,
         notes || "",
       ]
@@ -104,10 +106,16 @@ export const getUserTransactions = async (req, res) => {
   const user_id = req.user.id;
 
   try {
-    const result = await pool.query(
-      "SELECT * FROM transactions WHERE user_id = $1 ORDER BY created_at DESC",
-      [user_id]
-    );
+    const result = await pool.query(`
+      SELECT 
+        t.*,
+        w.name AS wallet_name,
+        w.lien AS wallet_lien
+      FROM transactions t
+      LEFT JOIN wallets w ON t.wallet_id = w.id
+      WHERE t.user_id = $1
+      ORDER BY t.created_at DESC
+    `, [user_id]);
 
     res.json(result.rows);
   } catch (err) {
