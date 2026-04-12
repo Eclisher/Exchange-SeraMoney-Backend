@@ -8,6 +8,7 @@ import adminLogRoutes from "./routes/admin.logs.routes.js";
 import clientTransactionsRoutes from "./routes/client.transactions.routes.js";
 import cryptoRoutes from "./routes/crypto.routes.js";
 import walletRoutes from "./routes/wallet.routes.js";
+import transactionImageRoutes from "./routes/transactionImage.routes.js";
 const app = express();
 
 app.use(cors());
@@ -25,4 +26,5 @@ app.use("/api/admin", adminLogRoutes);
 app.use("/api", clientTransactionsRoutes);
 app.use("/api/cryptos", cryptoRoutes);
 app.use("/api/wallets", walletRoutes);
+app.use("/api/transaction-images", transactionImageRoutes);
 export default app;
