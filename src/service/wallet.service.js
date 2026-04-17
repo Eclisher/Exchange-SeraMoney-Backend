@@ -1,17 +1,17 @@
 import { pool } from "../config/database.js";
 
 async function createWallet(data) {
-  const { lien, name, description = [] } = data;
+  const { lien, name, address = [] } = data;
 
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
     const walletResult = await client.query(
-      `INSERT INTO wallets (lien, name, description)
+      `INSERT INTO wallets (lien, name, address)
        VALUES ($1, $2, $3)
        RETURNING *`,
-      [lien, name, description],
+      [lien, name, address],
     );
     const wallet = walletResult.rows[0];
     
@@ -40,13 +40,13 @@ async function createWallet(data) {
   }
 
   async function updateWallet(id, data) {
-    const { lien, name, description } = data;
+    const { lien, name, address } = data;
     const result = await pool.query(`
       UPDATE wallets
-      SET lien = $1, name = $2, description = $3
+      SET lien = $1, name = $2, address = $3
       WHERE id = $4
       RETURNING *
-    `, [lien, name, description, id]);
+    `, [lien, name, address, id]);
     return result.rows[0];
   }
 

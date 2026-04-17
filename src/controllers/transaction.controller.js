@@ -29,9 +29,9 @@ export const createTransaction = async (req, res) => {
   }
 
   if (type === "VENTE") {
-    if (!amount_crypto) {
+    if (!amount_crypto || !wallet_address) {
       return res.status(400).json({
-        message: "Pour une VENTE, le montant crypto est obligatoire",
+        message: "Pour une VENTE, montant crypto et adresse sont obligatoires",
       });
     }
   }
@@ -42,9 +42,9 @@ export const createTransaction = async (req, res) => {
   try {
     const result = await pool.query(
       `INSERT INTO transactions 
-       (user_id, reference, type, crypto, network, amount_crypto, amount_ariary, wallet_id, wallet_address, notes)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
-       RETURNING *`,
+   (user_id, reference, type, crypto, network, amount_crypto, amount_ariary, wallet_id, wallet_address, notes)
+   VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+   RETURNING *`,
       [
         user_id,
         reference,
@@ -54,11 +54,10 @@ export const createTransaction = async (req, res) => {
         amount_crypto || null,
         amount_ariary || null,
         wallet_id || null,
-        type === "ACHAT" ? wallet_address : null,
+        type === "VENTE" ? wallet_address : null,
         notes || "",
-      ]
+      ],
     );
-
     const transaction = result.rows[0];
     if (type === "ACHAT") {
       return res.status(201).json({

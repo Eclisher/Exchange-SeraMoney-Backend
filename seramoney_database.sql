@@ -167,3 +167,4 @@ ADD CONSTRAINT fk_wallet
 FOREIGN KEY (wallet_id)
 REFERENCES wallets(id)
 ON DELETE SET NULL;
+ALTER TABLE wallets RENAME COLUMN description TO address;

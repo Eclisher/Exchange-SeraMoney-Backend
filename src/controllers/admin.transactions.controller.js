@@ -13,6 +13,7 @@ export const getPendingTransactions = async (req, res) => {
         t.wallet_address,
         t.status,
         t.created_at,
+        t.wallet_address,
         w.name AS wallet_name,
         w.lien AS wallet_lien,
         u.full_name,
@@ -52,6 +53,7 @@ export const getAllTransactions = async (req, res) => {
         t.updated_at,
         w.name AS wallet_name,
         w.lien AS wallet_lien,
+        t.wallet_address,
         u.full_name AS client_name,
         u.phone_number,
         u.mobile_money_type
