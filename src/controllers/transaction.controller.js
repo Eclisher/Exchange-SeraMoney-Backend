@@ -54,7 +54,7 @@ export const createTransaction = async (req, res) => {
         amount_crypto || null,
         amount_ariary || null,
         wallet_id || null,
-        type === "VENTE" ? wallet_address : null,
+        wallet_address || null,
         notes || "",
       ],
     );
