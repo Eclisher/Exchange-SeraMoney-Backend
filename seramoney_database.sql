@@ -96,6 +96,14 @@ CREATE TABLE wallets (
         ON DELETE CASCADE
 );
 
+CREATE TABLE wallet_addresses (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  wallet_id UUID REFERENCES wallets(id) ON DELETE CASCADE,
+  crypto_id UUID REFERENCES cryptos(id) ON DELETE CASCADE,
+  network VARCHAR(50),
+  address TEXT NOT NULL
+);
+
 CREATE TABLE cryptos (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     symbol VARCHAR(10) UNIQUE NOT NULL,

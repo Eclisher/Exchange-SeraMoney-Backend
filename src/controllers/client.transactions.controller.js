@@ -15,7 +15,7 @@ export const getMyTransactions = async (req, res) => {
       [userId],
     );
     res.json(result.rows);
-  } catch (err) {
+  } catch (err) {   
     console.error(err);
     res.status(500).json({ message: "Erreur serveur" });
   }
