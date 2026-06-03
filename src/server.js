@@ -2,7 +2,7 @@ import "./load-env.js";
 import app from "./app.js";
 import { transporter, isMailConfigured } from "./config/mail.js";
 
-const PORT = Number(process.env.PORT) || 3000;
+const PORT = Number(process.env.PORT);
 
 const server = app.listen(PORT, () => {
   console.log(` Backend lancé sur http://localhost:${PORT}`);

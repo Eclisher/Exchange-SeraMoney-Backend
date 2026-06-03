@@ -7,7 +7,7 @@ import {
 
 const router = express.Router();
 
-router.post("/wallets/:walletId/addresses", createWallet);
-router.get("/wallets/:walletId/addresses", getWallets);
-router.delete("/wallets/:walletId/addresses/:addressId", updateWallet);
+router.post("/:walletId/addresses", createWallet);
+router.get("/:walletId/addresses", getWallets);
+router.delete("/:walletId/addresses/:addressId", updateWallet);
 export default router;
