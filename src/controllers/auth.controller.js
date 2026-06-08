@@ -1,4 +1,5 @@
 import { pool } from "../config/database.js";
+import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { transporter, isMailConfigured } from "../config/mail.js";
@@ -55,7 +56,7 @@ export const register = async (req, res) => {
     return res.status(400).json({
       message: "Numéro incohérent avec le type Mobile Money sélectionné",
     });
-  } 
+  }
 
   try {
     const hash = await bcrypt.hash(password, 10);
@@ -70,7 +71,7 @@ export const register = async (req, res) => {
         email.toLowerCase(),
         mobile_money_type.toUpperCase(),
         hash,
-      ]
+      ],
     );
 
     res.status(201).json({ message: "Compte créé avec succès" });
@@ -81,7 +82,6 @@ export const register = async (req, res) => {
     });
   }
 };
-
 
 export const login = async (req, res) => {
   const { phone_number, email, full_name, password } = req.body;
@@ -95,17 +95,17 @@ export const login = async (req, res) => {
     if (phone_number) {
       result = await pool.query(
         "SELECT * FROM users WHERE phone_number = $1 AND is_active = true",
-        [phone_number]
+        [phone_number],
       );
     } else if (email) {
       result = await pool.query(
         "SELECT * FROM users WHERE email = $1 AND is_active = true",
-        [email.toLowerCase()]
+        [email.toLowerCase()],
       );
     } else if (full_name) {
       result = await pool.query(
         "SELECT * FROM users WHERE full_name = $1 AND is_active = true",
-        [full_name]
+        [full_name],
       );
     }
 
@@ -123,7 +123,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }
+      { expiresIn: "1d" },
     );
 
     res.json({
@@ -163,8 +163,7 @@ export const getAllUsers = async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Erreur serveur" });
   }
-}
-
+};
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -175,7 +174,7 @@ export const forgotPassword = async (req, res) => {
 
   const result = await pool.query(
     "SELECT * FROM users WHERE email = $1 AND is_active = true",
-    [email.toLowerCase()]
+    [email.toLowerCase()],
   );
 
   if (!result.rows.length) {
@@ -185,13 +184,13 @@ export const forgotPassword = async (req, res) => {
   const user = result.rows[0];
 
   const token = crypto.randomUUID();
-  const expires = new Date(Date.now() + 15 * 60 * 1000); 
+  const expires = new Date(Date.now() + 15 * 60 * 1000);
 
   await pool.query(
     `UPDATE users 
      SET reset_password_token=$1, reset_password_expires=$2
      WHERE id=$3`,
-    [token, expires, user.id]
+    [token, expires, user.id],
   );
 
   if (!isMailConfigured) {
@@ -236,7 +235,7 @@ export const resetPassword = async (req, res) => {
     `SELECT * FROM users 
      WHERE reset_password_token=$1 
      AND reset_password_expires > NOW()`,
-    [token]
+    [token],
   );
 
   if (!result.rows.length) {
@@ -252,7 +251,7 @@ export const resetPassword = async (req, res) => {
          reset_password_token=NULL, 
          reset_password_expires=NULL
      WHERE id=$2`,
-    [hash, user.id]
+    [hash, user.id],
   );
 
   res.json({ message: "Mot de passe réinitialisé avec succès" });

@@ -30,11 +30,13 @@ INSERT INTO users (
   full_name,
   phone_number,
   password_hash,
+  mobile_money_type,
   role
 ) VALUES (
   'Admin Seramoney',
   '0386749113',
   'harizo123',
+  'MVola',
   'ADMIN'
 );
 
@@ -109,7 +111,7 @@ CREATE TABLE cryptos (
     symbol VARCHAR(10) UNIQUE NOT NULL,
     name VARCHAR(50) NOT NULL,
     buy_rate NUMERIC(18,2) NOT NULL,
-    sell_ra te NUMERIC(18,2) NOT NULL,
+    sell_rate NUMERIC(18,2) NOT NULL,
     color VARCHAR(50),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -147,6 +149,10 @@ ALTER TABLE transactions
 ADD COLUMN reference VARCHAR(50) UNIQUE;
 
 ALTER TABLE users ADD COLUMN email VARCHAR(150) UNIQUE;
+
+-- Colonnes pour la réinitialisation de mot de passe
+ALTER TABLE users ADD COLUMN reset_password_token UUID;
+ALTER TABLE users ADD COLUMN reset_password_expires TIMESTAMP;
 
 ALTER TABLE users ALTER COLUMN role SET DEFAULT 'ADMIN';
 
