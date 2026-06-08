@@ -1,28 +1,47 @@
 import dotenv from "dotenv";
+import { Resend } from "resend";
+import path from "path";
+import { fileURLToPath } from "url";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-const { transporter, isMailConfigured } = await import("../src/config/mail.js");
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-console.log("isMailConfigured=", isMailConfigured);
-if (!isMailConfigured) {
-  console.error("Mail not configured (MAIL_USER or MAIL_PASS missing).");
+const resendApiKey = process.env.RESEND_API_KEY;
+const mailFrom = process.env.MAIL_FROM;
+
+if (!resendApiKey) {
+  console.error("RESEND_API_KEY manquant dans le .env");
   process.exit(1);
 }
 
-try {
-  // Verify connection configuration before sending
-  await transporter.verify();
-  console.log("✓ SMTP transporter verified: connection to server ok");
+if (!mailFrom) {
+  console.error("MAIL_FROM manquant dans le .env");
+  process.exit(1);
+}
 
-  const info = await transporter.sendMail({
-    from: `"Test" <${process.env.MAIL_USER}>`,
-    to: process.env.MAIL_USER,
-    subject: "Test SMTP from seramoney backend",
-    text: "This is a test email from seramoney backend.",
+const resend = new Resend(resendApiKey);
+
+try {
+  const response = await resend.emails.send({
+    from: mailFrom,
+    to: ["hei.harizo@gmail.com"],
+    subject: "Test Resend depuis Seramoney",
+    html: `
+      <h1>Test réussi 🎉</h1>
+      <p>Votre configuration Resend fonctionne correctement.</p>
+    `,
   });
-  console.log("✓ Mail sent:", info.messageId);
-} catch (err) {
-  console.error("SMTP ERROR:", err);
+
+  if (response?.error) {
+    throw response.error;
+  }
+
+  console.log("✓ Email envoyé avec succès");
+  console.log(response);
+} catch (error) {
+  console.error("✗ Erreur Resend");
+  console.error(error);
   process.exit(1);
 }

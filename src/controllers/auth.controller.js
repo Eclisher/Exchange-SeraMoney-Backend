@@ -2,7 +2,8 @@ import { pool } from "../config/database.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { transporter, isMailConfigured } from "../config/mail.js";
+import { isMailConfigured } from "../config/mail.js";
+import { sendPasswordResetEmail } from "../service/mailService.js";
 
 const isValidPhoneForMobileMoney = (phone, mobileMoneyType) => {
   const cleaned = phone.replace(/\s+/g, "");
@@ -196,23 +197,13 @@ export const forgotPassword = async (req, res) => {
   if (!isMailConfigured) {
     return res.status(503).json({
       message:
-        "Envoi d’email indisponible : configurez MAIL_USER et MAIL_PASS dans .env",
+        "Envoi d’email indisponible : configurez RESEND_API_KEY dans .env",
     });
   }
 
   const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
 
-  await transporter.sendMail({
-    from: `"Support Crypto" <${process.env.MAIL_USER}>`,
-    to: user.email,
-    subject: "Réinitialisation de votre mot de passe",
-    html: `
-      <p>Bonjour ${user.full_name},</p>
-      <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
-      <a href="${resetLink}">${resetLink}</a>
-      <p>Ce lien expire dans 15 minutes.</p>
-    `,
-  });
+  await sendPasswordResetEmail(user.email, user, resetLink);
 
   res.json({ message: "Email de réinitialisation envoyé" });
 };

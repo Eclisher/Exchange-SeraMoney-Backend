@@ -1,4 +1,4 @@
-import { transporter, isMailConfigured } from "../config/mail.js";
+import { resend, isMailConfigured, mailSenderAddress } from "../config/mail.js";
 
 function row(label, value) {
   return `
@@ -160,16 +160,37 @@ function buildTransactionEmail(transaction) {
 
 export async function sendTransactionCompletedEmail(toEmail, transaction) {
   if (!isMailConfigured) {
-    console.warn("[Mail] SMTP non configuré — email non envoyé.");
+    console.warn("[Mail] Resend non configuré — email non envoyé.");
     return;
   }
 
-  await transporter.sendMail({
-    from: `"SeraMoney" <${process.env.MAIL_USER}>`,
+  await resend.emails.send({
+    from: mailSenderAddress,
     to: toEmail,
-    subject: ` Transaction terminée – Réf. ${transaction.reference}`,
+    subject: `Transaction terminée – Réf. ${transaction.reference}`,
     html: buildTransactionEmail(transaction),
   });
 
   console.log(`[Mail] ✓ Envoyé à ${toEmail} — réf: ${transaction.reference}`);
+}
+
+export async function sendPasswordResetEmail(toEmail, user, resetLink) {
+  if (!isMailConfigured) {
+    console.warn("[Mail] Resend non configuré — email de réinitialisation non envoyé.");
+    return;
+  }
+
+  await resend.emails.send({
+    from: mailSenderAddress,
+    to: toEmail,
+    subject: "Réinitialisation de votre mot de passe",
+    html: `
+      <p>Bonjour ${user.full_name},</p>
+      <p>Cliquez sur le lien ci-dessous pour réinitialiser votre mot de passe :</p>
+      <a href="${resetLink}">${resetLink}</a>
+      <p>Ce lien expire dans 15 minutes.</p>
+    `,
+  });
+
+  console.log(`[Mail] ✓ Envoi de réinitialisation à ${toEmail}`);
 }
