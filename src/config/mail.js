@@ -6,35 +6,19 @@ const mailPass = process.env.MAIL_PASS;
 
 export const isMailConfigured = Boolean(mailUser && mailPass);
 
-// Prefer IPv4 addresses when resolving DNS to avoid ENETUNREACH on hosts
+// Force IPv4 for DNS lookups to avoid ENETUNREACH on hosts
 // that return AAAA records while the environment lacks IPv6 connectivity.
-// This is less intrusive than overriding `dns.lookup` globally.
-if (typeof dns.setDefaultResultOrder === "function") {
-  try {
-    dns.setDefaultResultOrder("ipv4first");
-  } catch (err) {
-    // ignore; keep default resolution order
+// This is essential on platforms like Render that don't support IPv6 outbound.
+const originalLookup = dns.lookup.bind(dns);
+dns.lookup = (hostname, options, callback) => {
+  if (typeof options === "function") {
+    callback = options;
+    options = {};
   }
-}
-
-// Optional: force IPv4 for DNS lookups to avoid ENETUNREACH on hosts
-// that return AAAA records while the environment lacks IPv6 connectivity.
-// Enable by setting MAIL_FORCE_IPV4=true in the environment.
-if (process.env.MAIL_FORCE_IPV4 === "true") {
-  const originalLookup = dns.lookup.bind(dns);
-  dns.lookup = (hostname, options, callback) => {
-    if (typeof options === "function") {
-      callback = options;
-      options = {};
-    }
-    // If caller explicitly requested IPv6, respect that.
-    if (options && options.family === 6) {
-      return originalLookup(hostname, options, callback);
-    }
-    const newOptions = Object.assign({}, options || {}, { family: 4 });
-    return originalLookup(hostname, newOptions, callback);
-  };
-}
+  // Always force IPv4 to avoid IPv6 fallback failures
+  const newOptions = Object.assign({}, options || {}, { family: 4 });
+  return originalLookup(hostname, newOptions, callback);
+};
 
 const transportOptions = {
   host: process.env.MAIL_HOST || "smtp.gmail.com",
