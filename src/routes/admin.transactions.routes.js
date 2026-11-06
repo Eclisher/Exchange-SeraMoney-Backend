@@ -3,6 +3,7 @@ import {
   getPendingTransactions,
   updateTransactionStatus,
   getAllTransactions,
+  getTransactionsWithProof,
 } from "../controllers/admin.transactions.controller.js";
 
 import { authMiddleware } from "../middlewares/auth.middleware.js";
@@ -14,6 +15,7 @@ router.use(authMiddleware, adminMiddleware);
 
 router.get("/transactions/pending", getPendingTransactions);
 router.get("/transactions", getAllTransactions);
+router.get("/transactions-with-proof", getTransactionsWithProof);
 router.put("/transactions/:transactionId/status", updateTransactionStatus);
 router.patch("/transactions/:transactionId/status", updateTransactionStatus);
 

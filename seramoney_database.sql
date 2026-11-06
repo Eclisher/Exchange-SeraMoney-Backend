@@ -21,7 +21,7 @@ CREATE TABLE users (
     full_name VARCHAR(100) NOT NULL,
     phone_number VARCHAR(20) UNIQUE NOT NULL,
     mobile_money_type VARCHAR(20) NOT NULL, -- MVola | OrangeMoney
-    role VARCHAR(10) NOT NULL DEFAULT 'CLIENT', -- CLIENT | ADMIN
+    role VARCHAR(10) NOT NULL DEFAULT 'ADMIN', -- CLIENT | ADMIN
     password_hash TEXT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -84,6 +84,19 @@ CREATE TABLE admin_logs (
         FOREIGN KEY (transaction_id)
         REFERENCES transactions(id)
 );
+CREATE TABLE IF NOT EXISTS transaction_images (
+  id SERIAL PRIMARY KEY,
+  transaction_id UUID NOT NULL,
+  image_base64 TEXT NOT NULL,
+  title VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_transaction_images_transaction
+    FOREIGN KEY (transaction_id)
+    REFERENCES transactions(id)
+    ON DELETE CASCADE
+);
+
+
 CREATE TABLE wallets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     lien TEXT NOT NULL,

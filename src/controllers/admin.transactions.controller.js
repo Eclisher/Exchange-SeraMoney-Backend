@@ -53,7 +53,63 @@ export const getAllTransactions = async (req, res) => {
   }
 };
 
-// ── modifié : ajout email ──────────────────────────────────────────────────────
+// ── getTransactionsWithProof : transactions having at least one image ────────────
+export const getTransactionsWithProof = async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT
+        t.id,
+        t.type,
+        t.crypto,
+        t.network,
+        t.amount_ariary,
+        t.amount_crypto,
+        t.wallet_address,
+        t.status,
+        t.notes,
+        t.reference,
+        t.created_at,
+        t.updated_at,
+
+        w.name AS wallet_name,
+        w.lien AS wallet_lien,
+
+        u.full_name AS client_name,
+        u.phone_number,
+        u.mobile_money_type,
+        u.email AS client_email,
+
+        (
+          SELECT COUNT(*)
+          FROM transaction_images ti
+          WHERE ti.transaction_id = t.id
+        ) AS image_count
+
+      FROM transactions t
+
+      JOIN users u ON u.id = t.user_id
+      LEFT JOIN wallets w ON t.wallet_id = w.id
+
+      WHERE EXISTS (
+        SELECT 1
+        FROM transaction_images ti
+        WHERE ti.transaction_id = t.id
+      )
+
+      ORDER BY t.created_at DESC
+    `);
+
+    res.json(result.rows);
+  } catch (err) {
+    console.error("[Transactions With Proof]", err);
+
+    res.status(500).json({
+      message: "Impossible de récupérer les transactions avec preuves",
+    });
+  }
+};
+
+// ── modified : ajout email ──────────────────────────────────────────────────────
 export const updateTransactionStatus = async (req, res) => {
   const { transactionId } = req.params;
   const { status, notes } = req.body;

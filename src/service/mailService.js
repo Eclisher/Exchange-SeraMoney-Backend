@@ -1,5 +1,6 @@
 import { resend, isMailConfigured, mailSenderAddress } from "../config/mail.js";
 
+
 function row(label, value) {
   return `
   <tr>
@@ -7,6 +8,18 @@ function row(label, value) {
     <td style="padding:8px 0;font-size:13px;vertical-align:top;width:55%;">${value}</td>
   </tr>`;
 }
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// EMAIL CLIENT : transaction terminée
+// ──────────────────────────────────────────────────────────────────────────────
 
 function buildTransactionEmail(transaction) {
   const {
@@ -164,23 +177,182 @@ export async function sendTransactionCompletedEmail(toEmail, transaction) {
     return;
   }
 
-  await resend.emails.send({
+  // Resend ne lève pas d'exception sur une erreur d'API : il retourne { error }
+  const { error } = await resend.emails.send({
     from: mailSenderAddress,
     to: toEmail,
     subject: `Transaction terminée – Réf. ${transaction.reference}`,
     html: buildTransactionEmail(transaction),
   });
 
+  if (error) {
+    throw new Error(`Resend : ${error.message}`);
+  }
+
   console.log(`[Mail] ✓ Envoyé à ${toEmail} — réf: ${transaction.reference}`);
 }
 
-export async function sendPasswordResetEmail(toEmail, user, resetLink) {
+// ──────────────────────────────────────────────────────────────────────────────
+// EMAIL ADMIN : nouvelle demande avec preuve (to = admin, cc = co-admin)
+// ──────────────────────────────────────────────────────────────────────────────
+
+function buildAdminNotificationEmail(transaction) {
+  const {
+    client_name,
+    client_email,
+    reference,
+    type,
+    crypto,
+    network,
+    amount_crypto,
+    amount_ariary,
+    wallet_address,
+    wallet_name,
+    mobile_money_type,
+    phone_number,
+    status,
+    created_at,
+  } = transaction;
+
+  const isAchat = type === "ACHAT";
+  const typeLabel = isAchat ? "Achat" : "Vente";
+  const typeColor = isAchat ? "#22c55e" : "#3b82f6";
+
+  const formattedDate = new Date(created_at || Date.now()).toLocaleString(
+    "fr-FR",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
+
+  const mobileMoney = mobile_money_type
+    ? { MVOLA: "MVola", ORANGE: "OrangeMoney" }[
+        mobile_money_type.toUpperCase()
+      ] || mobile_money_type
+    : null;
+
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Nouvelle demande – SéraMoney</title>
+</head>
+<body style="margin:0;padding:0;background:#0f1117;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f1117;padding:40px 16px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- HEADER -->
+        <tr>
+          <td style="background:linear-gradient(135deg,#1a1d2e 0%,#12151f 100%);border-radius:20px 20px 0 0;padding:36px 40px 28px;text-align:center;border:1px solid #2a2d3e;border-bottom:none;">
+            <div style="display:inline-block;background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;padding:14px 24px;margin-bottom:20px;">
+              <span style="color:#fff;font-size:22px;font-weight:800;letter-spacing:1px;">💱 SéraMoney</span>
+            </div>
+            <h1 style="color:#f8fafc;font-size:22px;font-weight:700;margin:12px 0 8px;">Nouvelle demande avec preuve</h1>
+            <p style="color:#94a3b8;font-size:14px;margin:0;">Une preuve de paiement vient d'être envoyée. Vérification requise.</p>
+          </td>
+        </tr>
+
+        <!-- BODY -->
+        <tr>
+          <td style="background:#12151f;padding:32px 40px;border:1px solid #2a2d3e;border-top:none;border-bottom:none;">
+
+            <table width="100%" cellpadding="0" cellspacing="0"
+              style="background:#1a1d2e;border-radius:16px;border:1px solid #2a2d3e;margin-bottom:24px;">
+              <tr>
+                <td style="background:linear-gradient(90deg,#6366f115,#8b5cf610);padding:14px 24px;border-bottom:1px solid #2a2d3e;border-radius:16px 16px 0 0;">
+                  <span style="color:#a5b4fc;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;">
+                    📋 Données de l'échange
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:20px 24px;">
+                  <table width="100%" cellpadding="0" cellspacing="0">
+                    ${row("Référence", `<span style="font-family:monospace;color:#a5b4fc;font-size:12px;">${escapeHtml(reference)}</span>`)}
+                    ${row("Type", `<span style="background:${typeColor}25;color:${typeColor};padding:3px 14px;border-radius:20px;font-size:12px;font-weight:700;">${typeLabel}</span>`)}
+                    ${row("Cryptomonnaie", `<strong style="color:#f8fafc;">${escapeHtml(crypto)}</strong>&nbsp;<span style="color:#475569;font-size:12px;">(${escapeHtml(network)})</span>`)}
+                    ${row("Montant crypto", `<strong style="color:#f8fafc;font-size:15px;">${parseFloat(amount_crypto)} ${escapeHtml(crypto)}</strong>`)}
+                    ${row("Montant Ariary", `<strong style="color:#f8fafc;font-size:15px;">${parseFloat(amount_ariary).toLocaleString("fr-FR")} Ar</strong>`)}
+                    ${wallet_name ? row("Portefeuille", `<span style="color:#94a3b8;">${escapeHtml(wallet_name)}</span>`) : ""}
+                    ${wallet_address ? row("Adresse réception", `<span style="font-family:monospace;font-size:11px;color:#64748b;word-break:break-all;">${escapeHtml(wallet_address)}</span>`) : ""}
+                    ${row("Client", `<span style="color:#f8fafc;">${escapeHtml(client_name)}</span>`)}
+                    ${phone_number ? row("Téléphone", `<span style="color:#94a3b8;">${escapeHtml(phone_number)}</span>`) : ""}
+                    ${mobileMoney ? row("Mobile Money", `<span style="color:#94a3b8;">${escapeHtml(mobileMoney)}</span>`) : ""}
+                    ${client_email ? row("Email client", `<span style="color:#94a3b8;">${escapeHtml(client_email)}</span>`) : ""}
+                    ${row("Statut", `<span style="color:#f59e0b;font-weight:700;">${escapeHtml(status)}</span>`)}
+                    ${row("Créée le", `<span style="color:#94a3b8;">${formattedDate}</span>`)}
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <p style="color:#64748b;font-size:13px;line-height:1.7;margin:0;">
+              La preuve de paiement est consultable dans l'espace admin, page
+              <strong style="color:#f8fafc;">Demandes avec preuves</strong>.
+            </p>
+          </td>
+        </tr>
+
+        <!-- FOOTER -->
+        <tr>
+          <td style="background:#0d0f18;border-radius:0 0 20px 20px;padding:24px 40px;text-align:center;border:1px solid #2a2d3e;border-top:1px solid #1e2030;">
+            <p style="color:#334155;font-size:12px;margin:0;">
+              © ${new Date().getFullYear()} SéraMoney — Notification interne automatique
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td></tr>
+  </table>
+</body>
+</html>`;
+}
+
+export async function sendNewRequestNotificationEmail({ to, cc, transaction }) {
   if (!isMailConfigured) {
-    console.warn("[Mail] Resend non configuré — email de réinitialisation non envoyé.");
+    console.warn(
+      "[Mail] Resend non configuré — notification admin non envoyée.",
+    );
     return;
   }
 
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
+    from: mailSenderAddress,
+    to,
+    ...(cc ? { cc } : {}),
+    subject: `Nouvelle demande ${transaction.type} ${transaction.crypto} – Réf. ${transaction.reference}`,
+    html: buildAdminNotificationEmail(transaction),
+  });
+
+  if (error) {
+    throw new Error(`Resend : ${error.message}`);
+  }
+
+console.log(
+  `[Mail] ✓ Notification admin → ${to}${cc ? ` (cc ${cc})` : ""} — réf: ${transaction.reference}`,
+);
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// EMAIL : réinitialisation du mot de passe
+// ──────────────────────────────────────────────────────────────────────────────
+
+export async function sendPasswordResetEmail(toEmail, user, resetLink) {
+  if (!isMailConfigured) {
+    console.warn(
+      "[Mail] Resend non configuré — email de réinitialisation non envoyé.",
+    );
+    return;
+  }
+
+  const { error } = await resend.emails.send({
     from: mailSenderAddress,
     to: toEmail,
     subject: "Réinitialisation de votre mot de passe",
@@ -191,6 +363,10 @@ export async function sendPasswordResetEmail(toEmail, user, resetLink) {
       <p>Ce lien expire dans 15 minutes.</p>
     `,
   });
+
+  if (error) {
+    throw new Error(`Resend : ${error.message}`);
+  }
 
   console.log(`[Mail] ✓ Envoi de réinitialisation à ${toEmail}`);
 }
